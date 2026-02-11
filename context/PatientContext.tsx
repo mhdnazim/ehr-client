@@ -5,6 +5,8 @@ import axios from 'axios';
 import { toast } from 'react-hot-toast';
 import { Patient, Visit } from '@/lib/mockData';
 
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
+
 interface PatientContextType {
     patients: Patient[];
     addPatient: (patient: Patient) => void;
@@ -29,7 +31,7 @@ export const PatientProvider = ({ children }: { children: ReactNode }) => {
 
     const fetchPatients = async () => {
         try {
-            const response = await axios.get('http://localhost:4000/api/patients', {
+            const response = await axios.get(`${API_URL}/api/patients`, {
                 data: {}
             });
             if (response.data.success) {
@@ -49,7 +51,7 @@ export const PatientProvider = ({ children }: { children: ReactNode }) => {
 
     const fetchPatient = React.useCallback(async (id: string) => {
         try {
-            const response = await axios.get(`http://localhost:4000/api/patients/${id}`);
+            const response = await axios.get(`${API_URL}/api/patients/${id}`);
             if (response.data.success) {
                 const fetchedPatient = response.data.data;
                 setPatients((prev) => {
@@ -69,7 +71,7 @@ export const PatientProvider = ({ children }: { children: ReactNode }) => {
 
     const fetchMedicalRecords = React.useCallback(async (patientId: string) => {
         try {
-            const response = await axios.get(`http://localhost:4000/api/patients/${patientId}/medical-records`);
+            const response = await axios.get(`${API_URL}/api/patients/${patientId}/medical-records`);
             if (response.data.success) {
                 const visits = response.data.data;
                 // Update the patient's visits in the local state
@@ -91,7 +93,7 @@ export const PatientProvider = ({ children }: { children: ReactNode }) => {
 
     const addPatient = async (patient: Patient) => {
         try {
-            const response = await axios.post('http://localhost:4000/api/patients', {
+            const response = await axios.post(`${API_URL}/api/patients`, {
                 name: patient.name,
                 age: patient.age,
                 gender: patient.gender,
@@ -112,7 +114,7 @@ export const PatientProvider = ({ children }: { children: ReactNode }) => {
 
     const updatePatient = async (patient: Patient) => {
         try {
-            const response = await axios.put(`http://localhost:4000/api/patients/${patient._id}`, {
+            const response = await axios.put(`${API_URL}/api/patients/${patient._id}`, {
                 name: patient.name,
                 age: patient.age,
                 gender: patient.gender,
@@ -133,7 +135,7 @@ export const PatientProvider = ({ children }: { children: ReactNode }) => {
 
     const deletePatient = async (patientId: string) => {
         try {
-            const response = await axios.delete(`http://localhost:4000/api/patients/${patientId}`);
+            const response = await axios.delete(`${API_URL}/api/patients/${patientId}`);
             if (response.data.success) {
                 setPatients((prev) => prev.filter((p) => p._id !== patientId));
                 toast.success('Patient deleted successfully!');
@@ -148,7 +150,7 @@ export const PatientProvider = ({ children }: { children: ReactNode }) => {
 
     const addVisit = async (patientId: string, visit: Visit) => {
         try {
-            const response = await axios.post('http://localhost:4000/api/medical-records', {
+            const response = await axios.post(`${API_URL}/api/medical-records`, {
                 patientId,
                 visitDate: visit.visitDate,
                 diagnosis: visit.diagnosis,
@@ -182,7 +184,7 @@ export const PatientProvider = ({ children }: { children: ReactNode }) => {
 
     const deleteVisit = async (patientId: string, visitId: string) => {
         try {
-            const response = await axios.delete(`http://localhost:4000/api/medical-records/${visitId}`);
+            const response = await axios.delete(`${API_URL}/api/medical-records/${visitId}`);
 
             if (response.data.success) {
                 setPatients((prev) =>
@@ -207,7 +209,7 @@ export const PatientProvider = ({ children }: { children: ReactNode }) => {
     const updateVisit = async (patientId: string, visit: Visit) => {
         try {
             const visitId = visit._id || visit.id;
-            const response = await axios.put(`http://localhost:4000/api/medical-records/${visitId}`, {
+            const response = await axios.put(`${API_URL}/api/medical-records/${visitId}`, {
                 visitDate: visit.visitDate,
                 diagnosis: visit.diagnosis,
                 medications: visit.medications,
