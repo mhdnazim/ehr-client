@@ -8,6 +8,7 @@ import VisitHistory from '@/components/VisitHistory';
 import AddVisitModal from '@/components/modals/AddVisitModal';
 import ConfirmationModal from '@/components/modals/ConfirmationModal';
 import { Visit } from '@/lib/mockData';
+import Loader from './Loader';
 
 interface PatientProfileProps {
     id: string;
@@ -21,6 +22,7 @@ export default function PatientProfile({ id }: PatientProfileProps) {
         isOpen: false,
         visitId: null,
     });
+    const [isVisitsLoading, setIsVisitsLoading] = useState(false);
 
     const patient = getPatient(id);
     const [isLoading, setIsLoading] = useState(!patient);
@@ -32,12 +34,15 @@ export default function PatientProfile({ id }: PatientProfileProps) {
         dataFetchedRef.current = id;
 
         const loadPatient = async () => {
-            await fetchPatient(id);
-            await fetchMedicalRecords(id);
+            if (!patient) await fetchPatient(id);
             setIsLoading(false);
+
+            setIsVisitsLoading(true);
+            await fetchMedicalRecords(id);
+            setIsVisitsLoading(false);
         };
         loadPatient();
-    }, [id, fetchPatient, fetchMedicalRecords]);
+    }, [id, fetchPatient, fetchMedicalRecords, patient]);
 
     const handleEditVisit = (visit: Visit) => {
         setEditingVisit(visit);
@@ -63,7 +68,7 @@ export default function PatientProfile({ id }: PatientProfileProps) {
     if (isLoading) {
         return (
             <div className="flex justify-center items-center min-h-[50vh]">
-                <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+                <Loader />
             </div>
         );
     }
@@ -134,6 +139,7 @@ export default function PatientProfile({ id }: PatientProfileProps) {
                 visits={patient.visits || []}
                 onEdit={handleEditVisit}
                 onDelete={handleDeleteClick}
+                isLoading={isVisitsLoading}
             />
 
             <AddVisitModal

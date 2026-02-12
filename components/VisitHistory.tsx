@@ -1,13 +1,15 @@
 import { Visit } from '@/lib/mockData';
 import { Calendar, Stethoscope, Pill, FileText, Edit2, Trash2 } from 'lucide-react';
+import Loader from './Loader';
 
 interface VisitHistoryProps {
     visits: Visit[];
     onEdit: (visit: Visit) => void;
     onDelete: (id: string) => void;
+    isLoading?: boolean;
 }
 
-const VisitHistory = ({ visits, onEdit, onDelete }: VisitHistoryProps) => {
+const VisitHistory = ({ visits, onEdit, onDelete, isLoading = false }: VisitHistoryProps) => {
     // Sort visits by date (newest first)
     const sortedVisits = [...visits].sort((a, b) =>
         new Date(b.visitDate).getTime() - new Date(a.visitDate).getTime()
@@ -20,7 +22,11 @@ const VisitHistory = ({ visits, onEdit, onDelete }: VisitHistoryProps) => {
                 Medical History
             </h3>
 
-            {sortedVisits.length > 0 ? (
+            {isLoading ? (
+                <div className="flex justify-center items-center py-8 bg-gray-50 rounded-xl">
+                    <Loader />
+                </div>
+            ) : sortedVisits.length > 0 ? (
                 <div className="relative border-l-2 border-blue-100 ml-3 space-y-8">
                     {sortedVisits.map((visit, index) => (
                         <div key={index} className="relative pl-8">
