@@ -4,14 +4,16 @@ import { useState } from 'react';
 import { Search } from 'lucide-react';
 import { Patient } from '@/lib/mockData';
 import PatientCard from './PatientCard';
+import Loader from './Loader';
 
 interface PatientListProps {
     initialPatients: Patient[];
     onEdit: (patient: Patient) => void;
     onDelete: (id: string) => void;
+    isLoading?: boolean;
 }
 
-const PatientList: React.FC<PatientListProps> = ({ initialPatients, onEdit, onDelete }) => {
+const PatientList: React.FC<PatientListProps> = ({ initialPatients, onEdit, onDelete, isLoading = false }) => {
     const [searchTerm, setSearchTerm] = useState('');
 
     const filteredPatients = initialPatients.filter(patient =>
@@ -33,7 +35,11 @@ const PatientList: React.FC<PatientListProps> = ({ initialPatients, onEdit, onDe
                 />
             </div>
 
-            {filteredPatients.length > 0 ? (
+            {isLoading ? (
+                <div className="flex justify-center items-center py-12">
+                    <Loader />
+                </div>
+            ) : filteredPatients.length > 0 ? (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     {filteredPatients.map((patient) => (
                         <PatientCard

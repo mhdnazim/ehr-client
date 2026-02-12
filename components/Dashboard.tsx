@@ -9,7 +9,7 @@ import ConfirmationModal from './modals/ConfirmationModal';
 import { Patient } from '@/lib/mockData';
 
 export default function Dashboard() {
-    const { patients, deletePatient } = usePatients();
+    const { patients, deletePatient, loading } = usePatients();
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingPatient, setEditingPatient] = useState<Patient | null>(null);
     const [deleteConfirmation, setDeleteConfirmation] = useState<{ isOpen: boolean; patientId: string | null }>({
@@ -125,6 +125,7 @@ export default function Dashboard() {
                 initialPatients={patients}
                 onEdit={handleEditPatient}
                 onDelete={handleDeleteClick}
+                isLoading={loading}
             />
 
             <PatientModal
